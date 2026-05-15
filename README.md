@@ -107,7 +107,63 @@ The system measures food in Standard Meal Units (SMU) to ensure fair allocation.
 │ Distribution │
 └──────────────┘
 
+<<<<<<< HEAD
 text
+=======
+┌──────────────┐
+│ Restaurant │
+│ Login │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ Menu Upload │
+│ (One-Time) │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ Daily Surplus│
+│ Entry │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ Food Stored │
+│ in Database │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ NGO Login │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ SMU Capacity │
+│ Validation │
+└──────┬───────┘
+↓
+┌──────────────┐
+│ Nearby Food │
+│ Display │
+└──────┬───────┘
+↓
+┌──────────────┐
+│Order Placement│
+│(Within Limit)│
+└──────┬───────┘
+↓
+┌──────────────┐
+│ OTP Generated│
+└──────┬───────┘
+↓
+┌──────────────┐
+│Pickup & Verify│
+└──────┬───────┘
+↓
+┌──────────────┐
+│ Food │
+│ Distribution │
+└──────────────┘
+
+
+>>>>>>> 6d0a07e78b193a094399493c34f4d54768192066
 
 ---
 
@@ -140,6 +196,7 @@ Follow these steps to run the project on your own computer for development or te
 ```bash
 git clone https://github.com/DevTanisha-max/food-to-ngo-distribution-system.git
 cd food-to-ngo-distribution-system
+
 2. Create a Virtual Environment
 Windows:
 
