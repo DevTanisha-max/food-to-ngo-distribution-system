@@ -17,7 +17,7 @@ A web-based platform designed to reduce food wastage by enabling **fair, secure,
 
 ## 📌 Overview
 
-Food wastage is a major issue in urban areas, while many NGOs struggle to meet daily food requirements. This project provides a **centralized system** that connects restaurants with NGOs and ensures **equitable distribution based on actual need**, not speed or size.
+Food wastage is a major issue in urban areas, while many NGOs struggle to meet daily food requirements. This project provides a **centralized system** that connects restaurants with NGOs and ensures *fair, transparent, and efficient* redistribution of surplus food.
 
 The system introduces a **Standard Meal Unit (SMU) model** to enforce fairness and prevent resource hoarding.
 
@@ -56,29 +56,17 @@ The system measures food in Standard Meal Units (SMU) to ensure fair allocation.
 
 ## ⚙️ System Workflow
 
-Restaurant Login
-↓
-Menu Upload (One-Time)
-↓
-Daily Surplus Entry
-↓
-Food Stored in Database
-↓
-NGO Login
-↓
-SMU Capacity Validation
-↓
-Nearby Food Display
-↓
-Order Placement (Within Limit)
-↓
-OTP Generation
-↓
-Pickup & Verification
-↓
-Food Distribution
-
-
+1. **Restaurant Login**
+2. Menu Upload (One-Time)
+3. Daily Surplus Entry
+4. Food Stored in Database
+5. NGO Login
+6. SMU Capacity Validation
+7. Nearby Food Display
+8. Order Placement (Within Limit)
+9. OTP Generation
+10. Pickup & Verification
+11. Food Distribution
 
 ---
 
@@ -95,7 +83,7 @@ Food Distribution
 
 ---
 
-## 🚀Local Setup Guide
+## 🚀 Local Setup Guide
 
 ### Prerequisites
 
@@ -110,187 +98,211 @@ Food Distribution
 ```bash
 git clone https://github.com/DevTanisha-max/food-to-ngo-distribution-system.git
 cd food-to-ngo-distribution-system
+```
 
-2. Create a Virtual Environment
+#### 2. Create a Virtual Environment
 
-Windows:
+**Windows:**
+```bash
 python -m venv venv
 venv\Scripts\activate
+```
 
-macOS / Linux:
+**macOS / Linux:**
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
-3. Install Dependencies
+#### 3. Install Dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
-4. Set Up Environment Variables
-Create a .env file in the project root:
+#### 4. Set Up Environment Variables
 
-Windows:
+Create a `.env` file in the project root:
 
+**Windows:**
+```bash
 echo DATABASE_URL=sqlite:///food_to_ngo.db > .env
+```
 
-macOS/Linux:
-
+**macOS/Linux:**
+```bash
 touch .env
 # Then add this line: DATABASE_URL=sqlite:///food_to_ngo.db
+```
 
-5. Initialize the Database
+#### 5. Initialize the Database
 
+```bash
 python setup_db.py
+```
 
+#### 6. Run the Application
 
-6. Run the Application
-
+```bash
 python app.py
+```
 
-7. Access the Application
-Open your browser and go to: http://localhost:5000
+#### 7. Access the Application
 
-Troubleshooting Local Setup
-Issue	Solution
-ModuleNotFoundError: No module named 'flask'	Run pip install -r requirements.txt again
-Database error: no such table	Run python setup_db.py to create tables
-Port 5000 already in use	Use python app.py --port=5001
+Open your browser and go to: [http://localhost:5000](http://localhost:5000)
 
+---
 
+### Troubleshooting Local Setup
 
-🌍 Project Impact
-🍽️ Social Impact
-Reduces Food Waste: Restaurants can donate surplus instead of discarding it.
+| Issue | Solution |
+|-------|----------|
+| **ModuleNotFoundError: No module named 'flask'** | Run `pip install -r requirements.txt` again |
+| **Database error: no such table** | Run `python setup_db.py` to create tables |
+| **Port 5000 already in use** | Use `python app.py --port=5001` |
 
-Fights Hunger: NGOs get a steady, transparent supply of food for vulnerable communities.
+---
 
-Fair Distribution: The SMU model prevents hoarding and ensures resources reach those in need.
+## 🌍 Project Impact
 
-Builds Trust: Certificate verification and OTP pickup create a secure, accountable system.
+### 🍽️ Social Impact
 
-🌱 Environmental Impact
-Every meal rescued = less methane from rotting food in landfills.
+- **Reduces Food Waste:** Restaurants can donate surplus instead of discarding it.
+- **Fights Hunger:** NGOs get a steady, transparent supply of food for vulnerable communities.
+- **Fair Distribution:** The SMU model prevents hoarding and ensures resources reach those in need.
+- **Builds Trust:** Certificate verification and OTP pickup create a secure, accountable system.
 
-Example: 100 restaurants donating 10 SMU daily rescues 365,000 meals/year, saving approximately 365,000 kg of CO₂ equivalent.
+### 🌱 Environmental Impact
 
-💰 Economic Impact
-Stakeholder	Benefit
-Restaurants	Tax incentives, reduced waste disposal costs, positive brand image
-NGOs	Lower food procurement costs, predictable supply
-Society	Reduced government spending on hunger relief programs
-📊 Scalability Potential
-Scale	Estimated Daily Impact
-1 City	500 restaurants, 200 NGOs → 10,000 meals/day
-1 State	5,000 restaurants, 2,000 NGOs → 100,000 meals/day
-1 Country	50,000 restaurants, 20,000 NGOs → 1,000,000 meals/day
-🎯 UN Sustainable Development Goals (SDGs)
-SDG 2 (Zero Hunger) – Direct meal distribution to the needy
+- Every meal rescued = less methane from rotting food in landfills.
+- **Example:** 100 restaurants donating 10 SMU daily rescues 365,000 meals/year, saving approximately 365,000 kg of CO₂ equivalent.
 
-SDG 12 (Responsible Consumption) – Reduces food loss and waste
+### 💰 Economic Impact
 
-SDG 11 (Sustainable Cities) – Promotes smart, circular food systems
+| Stakeholder   | Benefit                                    |
+|-------------- |---------------------------------------------|
+| Restaurants   | Tax incentives, reduced waste disposal costs, positive brand image |
+| NGOs          | Lower food procurement costs, predictable supply |
+| Society       | Reduced government spending on hunger relief programs |
 
+---
 
+## 📊 Scalability Potential
 
-📁 Project Structure
+| Scale     | Estimated Daily Impact                              |
+|-----------|----------------------------------------------------|
+| 1 City    | 500 restaurants, 200 NGOs → 10,000 meals/day       |
+| 1 State   | 5,000 restaurants, 2,000 NGOs → 100,000 meals/day  |
+| 1 Country | 50,000 restaurants, 20,000 NGOs → 1,000,000 meals/day |
 
+---
+
+### 🎯 UN Sustainable Development Goals (SDGs)
+
+- **SDG 2 (Zero Hunger):** Direct meal distribution to the needy
+- **SDG 12 (Responsible Consumption):** Reduces food loss and waste
+- **SDG 11 (Sustainable Cities):** Promotes smart, circular food systems
+
+---
+
+## 📁 Project Structure
+
+```
 food-to-ngo-distribution-system/
-├── app.py                 # Main Flask application
-├── db.py                  # Database connection (SQLite/PostgreSQL)
-├── requirements.txt       # Python dependencies
-├── Procfile              # Render deployment configuration
+├── app.py               # Main Flask application
+├── db.py                # Database connection (SQLite/PostgreSQL)
+├── requirements.txt     # Python dependencies
+├── Procfile             # Render deployment configuration
 ├── frontend/
-│   ├── login.html        # Login page
-│   ├── signup.html       # Registration page
-│   ├── ngo.html          # NGO dashboard
-│   ├── restaurant.html   # Restaurant dashboard
-│   ├── otp.html          # OTP verification page
-│   ├── script.js         # Frontend JavaScript
-│   └── styles.css        # Global styling
-└── uploads/              # Uploaded certificates (local)
+│   ├── login.html       # Login page
+│   ├── signup.html      # Registration page
+│   ├── ngo.html         # NGO dashboard
+│   ├── restaurant.html  # Restaurant dashboard
+│   ├── otp.html         # OTP verification page
+│   ├── script.js        # Frontend JavaScript
+│   └── styles.css       # Global styling
+└── uploads/             # Uploaded certificates (local)
+```
 
+---
 
+## 👥 User Roles
 
-👥 User Roles
-🍕 Restaurant
-Register with business certificate
+### 🍕 Restaurant
 
-Wait for admin approval (or auto-approve in local/dev)
+- Register with business certificate
+- Wait for admin approval (or auto-approve in local/dev)
+- Add daily surplus food items
+- View incoming orders
+- Verify OTP before handing over food
 
-Add daily surplus food items
+### 🏢 NGO
 
-View incoming orders
+- Register with SMU capacity limit
+- Browse available food from nearby restaurants
+- Request food within remaining capacity
+- Receive OTP for pickup
+- Collect food after verification
 
-Verify OTP before handing over food
+### 👑 Admin
 
-🏢 NGO
-Register with SMU capacity limit
+- Verify restaurant certificates
+- Monitor system for abuse
+- (Auto-approval is enabled for local testing)
 
-Browse available food from nearby restaurants
+---
 
-Request food within remaining capacity
+## 🔒 Security Features
 
-Receive OTP for pickup
+- **OTP Verification:** Prevents unauthorized food collection
+- **Certificate Upload:** Restaurants must prove legitimacy
+- **SMU Limits:** Prevents single NGO from exhausting all resources
+- **Session-Based Auth:** Secure login state management
 
-Collect food after verification
+---
 
-👑 Admin
-Verify restaurant certificates
+## 🤝 Contributing
 
-Monitor system for abuse
-
-(Auto-approval is enabled for local testing)
-
-🔒 Security Features
-OTP Verification – Prevents unauthorized food collection
-
-Certificate Upload – Restaurants must prove legitimacy
-
-SMU Limits – Prevents single NGO from exhausting all resources
-
-Session-Based Auth – Secure login state management
-
-🤝 Contributing
 Contributions are welcome! Please follow these steps:
 
-Fork the repository
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/YourFeature`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/YourFeature`
+5. Open a Pull Request
 
-Create a feature branch: git checkout -b feature/YourFeature
+---
 
-Commit your changes: git commit -m 'Add some feature'
+## 📄 License
 
-Push to the branch: git push origin feature/YourFeature
-
-Open a Pull Request
-
-📄 License
 This project is licensed under the MIT License – see the LICENSE file for details.
 
-👨‍💻 Author
+---
+
+## 👨‍💻 Author
+
 Tanisha Sharma (DevTanisha-max)
 
-GitHub: @DevTanisha-max
+- GitHub: [@DevTanisha-max](https://github.com/DevTanisha-max)
+- Project Repository: [DevTanisha-max/food-to-ngo-distribution-system](https://github.com/DevTanisha-max/food-to-ngo-distribution-system)
+- Live Demo: [food-to-ngo-distribution-system.onrender.com](https://food-to-ngo-distribution-system.onrender.com)
 
-Project Repository: github.com/DevTanisha-max/food-to-ngo-distribution-system
+---
 
-Live Demo: food-to-ngo-distribution-system.onrender.com
+## 🙏 Acknowledgments
 
-🙏 Acknowledgments
-Flask – Lightweight backend framework
+- **Flask** – Lightweight backend framework
+- **Supabase** – Free PostgreSQL hosting
+- **Render** – Free cloud deployment platform
+- **Contributors** – All those who helped shape this project
 
-Supabase – Free PostgreSQL hosting
+---
 
-Render – Free cloud deployment platform
+## ⭐ Show Your Support
 
-Contributors – All those who helped shape this project
+If this project helps you or inspires you, please consider giving it a star on GitHub ⭐.  
+It helps others discover the project and motivates continued development.
 
-⭐ Show Your Support
-If this project helps you or inspires you, please consider giving it a star on GitHub ⭐. It helps others discover the project and motivates continued development.
+---
 
 Built with ❤️ to reduce waste and feed communities. | MIT License
-
-
-
-
-
-
-
