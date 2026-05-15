@@ -19,11 +19,10 @@ def serve_static(path):
     return app.send_static_file('login.html')
 
 
-# ------------------ SIGNUP (UPDATED) ------------------
+# ------------------ SIGNUP ------------------
 @app.route("/signup", methods=["POST"])
 def signup():
     try:
-        # 🔥 CHANGED: use form instead of JSON
         name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
@@ -32,10 +31,10 @@ def signup():
         conn = get_connection()
         cursor = conn.cursor()
 
-        # Insert user
+        # Insert user with auto-approve
         cursor.execute(
-            "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
-            (name, email, password, role)
+            "INSERT INTO users (name, email, password, role, is_approved) VALUES (?, ?, ?, ?, ?)",
+            (name, email, password, role, 1)
         )
 
         user_id = cursor.lastrowid
@@ -53,8 +52,8 @@ def signup():
             cursor.execute("""
                 INSERT INTO restaurants 
                 (user_id, restaurant_name, certificate, is_verified)
-                VALUES (%s, %s, %s, %s)
-            """, (user_id, name, filepath, False))
+                VALUES (?, ?, ?, ?)
+            """, (user_id, name, filepath, 1))
 
         # ---------------- NGO ----------------
         elif role == "ngo":
@@ -63,20 +62,20 @@ def signup():
             cursor.execute("""
                 INSERT INTO ngos 
                 (user_id, ngo_name, total_capacity_smu, remaining_capacity_smu)
-                VALUES (%s, %s, %s, %s)
+                VALUES (?, ?, ?, ?)
             """, (user_id, name, total_capacity, total_capacity))
 
         conn.commit()
         cursor.close()
         conn.close()
 
-        return jsonify({"message": "User created successfully"})
+        return jsonify({"message": "Signup successful! You can login now."})
 
     except Exception as e:
         return jsonify({"error": str(e)})
 
 
-# ------------------ LOGIN (UPDATED) ------------------
+# ------------------ LOGIN ------------------
 @app.route("/login", methods=["POST"])
 def login():
     try:
@@ -86,10 +85,10 @@ def login():
         password = data.get("password")
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT * FROM users WHERE email=%s AND password=%s",
+            "SELECT * FROM users WHERE email=? AND password=?",
             (email, password)
         )
         user = cursor.fetchone()
@@ -97,33 +96,46 @@ def login():
         if not user:
             return jsonify({"error": "Invalid credentials"})
 
-        # 🔥 UPDATED: verification check
-        if user["role"] == "restaurant":
+        # Convert to dict using indexes
+        user_dict = {
+            'id': user[0],
+            'name': user[1],
+            'email': user[2],
+            'password': user[3],
+            'role': user[4],
+            'certificate': user[5],
+            'is_approved': user[6],
+            'created_at': user[7]
+        }
+        
+        # Check verification for restaurant
+        if user_dict["role"] == "restaurant":
             cursor.execute(
-                "SELECT restaurant_id, is_verified FROM restaurants WHERE user_id=%s",
-                (user["user_id"],)
+                "SELECT restaurant_id, is_verified FROM restaurants WHERE user_id=?",
+                (user_dict["id"],)
             )
             res = cursor.fetchone()
-
-            if not res["is_verified"]:
+            
+            if not res or res[1] != 1:
                 return jsonify({"error": "Wait for admin verification"}), 403
+            
+            user_dict["restaurant_id"] = res[0]
 
-            user["restaurant_id"] = res["restaurant_id"]
-
-        elif user["role"] == "ngo":
+        elif user_dict["role"] == "ngo":
             cursor.execute(
-                "SELECT ngo_id FROM ngos WHERE user_id=%s",
-                (user["user_id"],)
+                "SELECT ngo_id FROM ngos WHERE user_id=?",
+                (user_dict["id"],)
             )
             res = cursor.fetchone()
-            user["ngo_id"] = res["ngo_id"]
+            if res:
+                user_dict["ngo_id"] = res[0]
 
         cursor.close()
         conn.close()
 
         return jsonify({
             "message": "Login successful",
-            "user": user
+            "user": user_dict
         })
 
     except Exception as e:
@@ -146,7 +158,7 @@ def add_food():
             INSERT INTO food_items 
             (restaurant_id, food_name, food_type, shelf_life_hours, dry_or_wet,
              calorific_value, smu_equivalent, quantity_available_smu, expiry_time)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data.get("restaurant_id"),
             data.get("food_name"),
@@ -174,15 +186,30 @@ def add_food():
 def get_food():
     try:
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM food_items WHERE expiry_time > NOW()")
-        food = cursor.fetchall()
+        cursor.execute("SELECT * FROM food_items WHERE expiry_time > datetime('now')")
+        rows = cursor.fetchall()
+        
+        food_list = []
+        for row in rows:
+            food_list.append({
+                'food_id': row[0],
+                'restaurant_id': row[1],
+                'food_name': row[2],
+                'food_type': row[3],
+                'shelf_life_hours': row[4],
+                'dry_or_wet': row[5],
+                'calorific_value': row[6],
+                'smu_equivalent': row[7],
+                'quantity_available_smu': row[8],
+                'expiry_time': row[9]
+            })
 
         cursor.close()
         conn.close()
 
-        return jsonify(food)
+        return jsonify(food_list)
 
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -198,33 +225,37 @@ def place_order():
         food_id = data.get("food_id")
         requested_smu = data.get("quantity_smu")
 
-        conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        print(f"Placing order: NGO={ngo_id}, Food={food_id}, Quantity={requested_smu}")
 
-        cursor.execute("SELECT remaining_capacity_smu FROM ngos WHERE ngo_id=%s", (ngo_id,))
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT remaining_capacity_smu FROM ngos WHERE ngo_id=?", (ngo_id,))
         ngo = cursor.fetchone()
 
-        if not ngo or ngo["remaining_capacity_smu"] < requested_smu:
-            return jsonify({"error": "SMU limit exceeded"})
+        if not ngo or ngo[0] < requested_smu:
+            return jsonify({"error": "SMU limit exceeded"}), 400
 
         otp = str(random.randint(1000, 9999))
         otp_expiry = datetime.now() + timedelta(minutes=10)
 
+        print(f"Generated OTP: {otp}")
+
         cursor.execute("""
             INSERT INTO orders (ngo_id, food_id, quantity_smu, otp, otp_expiry)
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (?, ?, ?, ?, ?)
         """, (ngo_id, food_id, requested_smu, otp, otp_expiry))
 
         cursor.execute("""
             UPDATE ngos 
-            SET remaining_capacity_smu = remaining_capacity_smu - %s 
-            WHERE ngo_id=%s
+            SET remaining_capacity_smu = remaining_capacity_smu - ? 
+            WHERE ngo_id=?
         """, (requested_smu, ngo_id))
 
         cursor.execute("""
             UPDATE food_items 
-            SET quantity_available_smu = quantity_available_smu - %s 
-            WHERE food_id=%s
+            SET quantity_available_smu = quantity_available_smu - ? 
+            WHERE food_id=?
         """, (requested_smu, food_id))
 
         conn.commit()
@@ -232,14 +263,15 @@ def place_order():
         cursor.close()
         conn.close()
 
+        # Return OTP in response
         return jsonify({
             "message": "Order placed",
             "otp": otp
-        })
+        }), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)})
-
+        print(f"Error in place-order: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 # ------------------ VERIFY OTP ------------------
 @app.route("/verify-otp", methods=["POST"])
@@ -251,22 +283,22 @@ def verify_otp():
         entered_otp = data.get("otp")
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM orders WHERE order_id=%s", (order_id,))
+        cursor.execute("SELECT * FROM orders WHERE order_id=?", (order_id,))
         order = cursor.fetchone()
 
         if not order:
             return jsonify({"error": "Order not found"})
 
-        if order["otp"] != entered_otp:
+        if order[4] != entered_otp:  # otp is at index 4
             return jsonify({"error": "Invalid OTP"})
 
-        if datetime.now() > order["otp_expiry"]:
+        if datetime.now() > datetime.strptime(order[5], '%Y-%m-%d %H:%M:%S.%f'):
             return jsonify({"error": "OTP expired"})
 
         cursor.execute(
-            "UPDATE orders SET order_status='collected' WHERE order_id=%s",
+            "UPDATE orders SET order_status='collected' WHERE order_id=?",
             (order_id,)
         )
 
@@ -283,7 +315,3 @@ def verify_otp():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-

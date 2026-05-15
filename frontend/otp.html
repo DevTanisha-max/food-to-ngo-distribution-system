@@ -3,493 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OTP Verification - Food Distribution</title>
+    <title>Verify OTP - Food Distribution</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* ============================================
-           SUPPORT TICKET SYSTEM STYLES
-           ============================================ */
-
-        /* Support Button */
-        .support-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 999;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 0;
-        }
-
-        .support-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-        }
-
-        .support-btn:active {
-            transform: translateY(0);
-        }
-
-        .support-label {
-            display: none;
-        }
-
-        @media (min-width: 768px) {
-            .support-btn:hover .support-label {
-                display: inline;
-            }
-        }
-
-        /* Support Modal */
-        .support-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .support-modal.active {
-            display: flex;
-        }
-
-        .support-modal-content {
+        .otp-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Support Header */
-        .support-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .support-header h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #111827;
-        }
-
-        /* Support Description */
-        .support-description {
-            padding: 0 24px;
-            color: #6b7280;
-            font-size: 14px;
-            margin: 0 0 16px 0;
-        }
-
-        /* Form Styles */
-        #supportForm {
-            padding: 0 24px 24px 24px;
-        }
-
-        .support-form-group {
-            margin-bottom: 16px;
-        }
-
-        .support-form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 6px;
-        }
-
-        .support-form-group input,
-        .support-form-group textarea,
-        .support-form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-
-        .support-form-group input:focus,
-        .support-form-group textarea:focus,
-        .support-form-group select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .support-form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Form Buttons */
-        .support-form-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .support-btn-cancel,
-        .support-btn-submit {
-            flex: 1;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .support-btn-cancel {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-
-        .support-btn-cancel:hover {
-            background: #e5e7eb;
-        }
-
-        .support-btn-submit {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .support-btn-submit:hover {
-            background: #2563eb;
-        }
-
-        .support-btn-submit:active {
-            transform: scale(0.98);
-        }
-
-        /* Success State */
-        .support-success {
-            padding: 48px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             text-align: center;
         }
-
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            background: #d1fae5;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: #059669;
-            margin: 0 auto 16px;
+        .otp-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
         }
-
-        .support-success h3 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: #111827;
+        .btn-verify {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
         }
-
-        .support-success p {
-            margin: 0 0 12px 0;
-            color: #6b7280;
-            font-size: 14px;
+        .btn-verify:hover {
+            background: #45a049;
         }
-
-        .ticket-id {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #9ca3af;
+        .order-id-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
-
-        .ticket-id span {
-            font-weight: 600;
-            color: #3b82f6;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 640px) {
-            .support-btn {
-                width: 48px;
-                height: 48px;
-                bottom: 16px;
-                right: 16px;
-            }
-
-            .support-modal-content {
-                border-radius: 12px;
-            }
-
-            .support-header {
-                padding: 16px;
-            }
-
-            .support-header h2 {
-                font-size: 18px;
-            }
-
-            .support-description {
-                padding: 0 16px;
-            }
-
-            #supportForm {
-                padding: 0 16px 16px 16px;
-            }
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h2>Verify OTP</h2>
-            <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem;">
-                Enter the OTP sent to your email
-            </p>
-            
-            <div class="form-group">
-                <input id="otp" type="text" placeholder="Enter OTP" maxlength="6">
-            </div>
-            
-            <button onclick="verifyOTP()">Verify</button>
-            
-            <p class="text-center" style="margin-top: 1.5rem; color: var(--text-muted);">
-                Didn't receive OTP? <a href="#" onclick="resendOTP()">Resend</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Support Ticket Button -->
-    <button id="supportBtn" class="support-btn" title="Open support ticket form">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 16v-4"></path>
-            <path d="M12 8h.01"></path>
-        </svg>
-        <span class="support-label">Support</span>
-    </button>
-
-    <!-- Support Ticket Modal -->
-    <div id="supportModal" class="support-modal">
-        <div class="support-modal-content">
-            <!-- Success State -->
-            <div id="successState" class="support-success" style="display: none;">
-                <div class="success-icon">✓</div>
-                <h3>Ticket Submitted!</h3>
-                <p>Thank you for reaching out. We'll respond to your query shortly.</p>
-                <p class="ticket-id">Ticket ID: <span id="ticketId"></span></p>
-            </div>
-
-            <!-- Form State -->
-            <div id="formState">
-                <div class="support-header">
-                    <h2>Support Ticket</h2>
-                    <button class="close-btn" onclick="closeSupportModal()">&times;</button>
-                </div>
-                <p class="support-description">Let us know how we can help. We'll get back to you soon.</p>
-
-                <form id="supportForm" onsubmit="submitSupportTicket(event)">
-                    <!-- Name Field -->
-                    <div class="support-form-group">
-                        <label for="supportName">Your Name</label>
-                        <input 
-                            type="text" 
-                            id="supportName" 
-                            placeholder="Enter your full name" 
-                            required
-                        >
-                    </div>
-
-                    <!-- Query Field -->
-                    <div class="support-form-group">
-                        <label for="supportQuery">Your Query</label>
-                        <textarea 
-                            id="supportQuery" 
-                            placeholder="Describe your issue or question..." 
-                            required
-                        ></textarea>
-                    </div>
-
-                    <!-- Priority Field -->
-                    <div class="support-form-group">
-                        <label for="supportPriority">Priority Level</label>
-                        <select id="supportPriority" required>
-                            <option value="low">🟢 Low</option>
-                            <option value="medium" selected>🟡 Medium</option>
-                            <option value="high">🔴 High</option>
-                        </select>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="support-form-buttons">
-                        <button type="button" class="support-btn-cancel" onclick="closeSupportModal()">
-                            Cancel
-                        </button>
-                        <button type="submit" class="support-btn-submit">
-                            Submit Ticket
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+    <div class="otp-container">
+        <h2>Verify OTP</h2>
+        <p>Enter the OTP you received</p>
+        
+        <label>Order ID:</label>
+        <input type="number" id="order_id" class="order-id-input" placeholder="Enter Order ID">
+        
+        <label>OTP:</label>
+        <input type="text" id="otp" class="otp-input" placeholder="0000" maxlength="4">
+        
+        <button class="btn-verify" onclick="verifyOTP()">Verify OTP</button>
+        
+        <p style="margin-top: 20px; font-size: 12px; color: #666;">
+            Didn't receive OTP? Check the alert when placing order.
+        </p>
     </div>
 
     <script src="script.js"></script>
+    
     <script>
-        // ============================================
-        // SUPPORT TICKET SYSTEM FUNCTIONS
-        // ============================================
-
-        // Get elements
-        const supportBtn = document.getElementById('supportBtn');
-        const supportModal = document.getElementById('supportModal');
-        const supportForm = document.getElementById('supportForm');
-
-        // Open support modal
-        if (supportBtn) {
-            supportBtn.addEventListener('click', function() {
-                console.log('Support button clicked!');
-                supportModal.classList.add('active');
-            });
-        }
-
-        // Close support modal
-        function closeSupportModal() {
-            console.log('Closing support modal');
-            supportModal.classList.remove('active');
-            document.getElementById('formState').style.display = 'block';
-            document.getElementById('successState').style.display = 'none';
-            if (supportForm) {
-                supportForm.reset();
-            }
-        }
-
-        // Close modal when clicking outside
-        if (supportModal) {
-            supportModal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeSupportModal();
+        console.log("OTP page loaded");
+        
+        // Add Enter key support
+        const otpInput = document.getElementById("otp");
+        if (otpInput) {
+            otpInput.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    verifyOTP();
                 }
             });
         }
-
-        // Submit support ticket
-        function submitSupportTicket(event) {
-            event.preventDefault();
-            console.log('Form submitted');
-
-            const name = document.getElementById('supportName').value.trim();
-            const query = document.getElementById('supportQuery').value.trim();
-            const priority = document.getElementById('supportPriority').value;
-
-            // Validation
-            if (!name) {
-                alert('Please enter your name');
-                return;
-            }
-            if (!query) {
-                alert('Please enter your query');
-                return;
-            }
-
-            console.log('Creating ticket:', { name, query, priority });
-
-            // Create ticket object
-            const ticket = {
-                id: Date.now(),
-                name: name,
-                query: query,
-                priority: priority,
-                timestamp: new Date().toISOString(),
-                status: 'open'
-            };
-
-            // Store in localStorage
-            let tickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
-            tickets.push(ticket);
-            localStorage.setItem('supportTickets', JSON.stringify(tickets));
-
-            console.log('Ticket saved:', ticket);
-
-            // Show success state
-            document.getElementById('formState').style.display = 'none';
-            document.getElementById('successState').style.display = 'block';
-            document.getElementById('ticketId').textContent = '#' + ticket.id;
-
-            // Close modal after 2 seconds
-            setTimeout(function() {
-                closeSupportModal();
-            }, 2000);
-        }
-
-        // View all support tickets (for debugging)
-        function viewSupportTickets() {
-            const tickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
-            console.log('Support Tickets:', tickets);
-            return tickets;
-        }
-
-        console.log('Support ticket system loaded successfully!');
     </script>
 </body>
 </html>

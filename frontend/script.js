@@ -36,7 +36,7 @@ async function signup() {
     const result = await res.json();
 
     if (res.ok) {
-        alert("Signup successful! Wait for admin approval.");
+        alert("Signup successful! You can login now.");
         window.location.href = "login.html";
     } else {
         alert(result.error);
@@ -105,6 +105,11 @@ async function loadFood() {
     const container = document.getElementById("food-list");
     container.innerHTML = "";
 
+    if (data.length === 0) {
+        container.innerHTML = "<p>No food available at the moment.</p>";
+        return;
+    }
+
     data.forEach(food => {
         container.innerHTML += `
             <div class="food-item-card">
@@ -133,23 +138,27 @@ async function placeOrder(food_id) {
 
     if (!qty) return;
 
-    const res = await fetch(BASE_URL + "/place-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            ngo_id: getNgoId(user),
-            food_id: food_id,
-            quantity_smu: parseInt(qty)
-        })
-    });
+    try {
+        const res = await fetch(BASE_URL + "/place-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ngo_id: getNgoId(user),
+                food_id: food_id,
+                quantity_smu: parseInt(qty)
+            })
+        });
 
-    const data = await res.json();
+        const data = await res.json();
 
-    if (res.ok) {
-        alert("Order placed! OTP: " + data.otp);
-        window.location.href = "otp.html";
-    } else {
-        alert(data.error);
+        if (res.ok) {
+            alert("Order placed! OTP: " + data.otp);
+            window.location.href = "otp.html";
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        alert("Error placing order: " + error);
     }
 }
 
