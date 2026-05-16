@@ -3,87 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify OTP - Food Distribution</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>FoodShare - Verify OTP</title>
     <style>
-        .otp-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            text-align: center;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .otp-input {
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #0c4a6e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 2.5rem;
             width: 100%;
-            padding: 12px;
-            font-size: 24px;
+            max-width: 450px;
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+        h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            color: white;
+            font-size: 1.5rem;
             text-align: center;
             letter-spacing: 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin: 20px 0;
+            margin-bottom: 1rem;
         }
-        .btn-verify {
-            background: #4CAF50;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
+
+        input:focus {
+            outline: none;
+            border-color: #8b5cf6;
         }
-        .btn-verify:hover {
-            background: #45a049;
-        }
-        .order-id-input {
+
+        button {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            border: none;
+            border-radius: 1rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        label {
-            display: block;
-            text-align: left;
-            margin-top: 10px;
-            font-weight: bold;
+
+        button:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <div class="otp-container">
+    <div class="glass-card">
+        <div class="logo-icon">🔐</div>
         <h2>Verify OTP</h2>
-        <p>Enter the OTP you received</p>
-        
-        <label>Order ID:</label>
-        <input type="number" id="order_id" class="order-id-input" placeholder="Enter Order ID">
-        
-        <label>OTP:</label>
-        <input type="text" id="otp" class="otp-input" placeholder="0000" maxlength="4">
-        
-        <button class="btn-verify" onclick="verifyOTP()">Verify OTP</button>
-        
-        <p style="margin-top: 20px; font-size: 12px; color: #666;">
-            Didn't receive OTP? Check the alert when placing order.
-        </p>
+        <p>Enter the 4-digit code sent to you</p>
+        <input type="number" id="order_id" placeholder="Order ID">
+        <input type="text" id="otp" placeholder="0000" maxlength="4">
+        <button onclick="verifyOTP()">Verify & Complete Pickup →</button>
     </div>
-
     <script src="script.js"></script>
-    
-    <script>
-        console.log("OTP page loaded");
-        
-        // Add Enter key support
-        const otpInput = document.getElementById("otp");
-        if (otpInput) {
-            otpInput.addEventListener("keypress", function(e) {
-                if (e.key === "Enter") {
-                    verifyOTP();
-                }
-            });
-        }
-    </script>
 </body>
 </html>

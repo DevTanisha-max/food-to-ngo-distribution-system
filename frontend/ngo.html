@@ -3,493 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGO Dashboard - Food Distribution</title>
+    <title>FoodShare - NGO Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* ============================================
-           SUPPORT TICKET SYSTEM STYLES
-           ============================================ */
+        /* Additional dashboard styles */
+        .dashboard-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-        /* Support Button */
-        .support-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1.5rem;
+            padding: 2rem;
             color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-            z-index: 999;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 0;
+            margin-bottom: 2rem;
         }
 
-        .support-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .support-btn:active {
-            transform: translateY(0);
-        }
-
-        .support-label {
-            display: none;
-        }
-
-        @media (min-width: 768px) {
-            .support-btn:hover .support-label {
-                display: inline;
-            }
-        }
-
-        /* Support Modal */
-        .support-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .support-modal.active {
-            display: flex;
-        }
-
-        .support-modal-content {
+        .stat-box {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
         }
 
-        /* Support Header */
-        .support-header {
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .food-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .food-image {
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .food-info {
+            padding: 1.2rem;
+        }
+
+        .food-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .food-meta {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 24px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .support-header h2 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
+            margin-bottom: 0.5rem;
             color: #6b7280;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: color 0.2s;
+            font-size: 0.85rem;
         }
 
-        .close-btn:hover {
-            color: #111827;
-        }
-
-        /* Support Description */
-        .support-description {
-            padding: 0 24px;
-            color: #6b7280;
-            font-size: 14px;
-            margin: 0 0 16px 0;
-        }
-
-        /* Form Styles */
-        #supportForm {
-            padding: 0 24px 24px 24px;
-        }
-
-        .support-form-group {
-            margin-bottom: 16px;
-        }
-
-        .support-form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 6px;
-        }
-
-        .support-form-group input,
-        .support-form-group textarea,
-        .support-form-group select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: all 0.2s;
-            box-sizing: border-box;
-        }
-
-        .support-form-group input:focus,
-        .support-form-group textarea:focus,
-        .support-form-group select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .support-form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Form Buttons */
-        .support-form-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .support-btn-cancel,
-        .support-btn-submit {
-            flex: 1;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .support-btn-cancel {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-
-        .support-btn-cancel:hover {
-            background: #e5e7eb;
-        }
-
-        .support-btn-submit {
-            background: #3b82f6;
+        .smu-badge {
+            background: #10b981;
             color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
-        .support-btn-submit:hover {
-            background: #2563eb;
+        .request-btn {
+            width: 100%;
+            padding: 0.6rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s;
         }
 
-        .support-btn-submit:active {
+        .request-btn:hover {
             transform: scale(0.98);
-        }
-
-        /* Success State */
-        .support-success {
-            padding: 48px 24px;
-            text-align: center;
-        }
-
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            background: #d1fae5;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            color: #059669;
-            margin: 0 auto 16px;
-        }
-
-        .support-success h3 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .support-success p {
-            margin: 0 0 12px 0;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .ticket-id {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .ticket-id span {
-            font-weight: 600;
-            color: #3b82f6;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 640px) {
-            .support-btn {
-                width: 48px;
-                height: 48px;
-                bottom: 16px;
-                right: 16px;
-            }
-
-            .support-modal-content {
-                border-radius: 12px;
-            }
-
-            .support-header {
-                padding: 16px;
-            }
-
-            .support-header h2 {
-                font-size: 18px;
-            }
-
-            .support-description {
-                padding: 0 16px;
-            }
-
-            #supportForm {
-                padding: 0 16px 16px 16px;
-            }
         }
     </style>
 </head>
 <body onload="loadFood()">
     <nav>
-        <h1>Food Connect</h1>
-        <button class="logout-btn" onclick="logout()" style="width: auto;">Logout</button>
+        <h1>🍽️ FoodShare</h1>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </nav>
 
-    <div class="container">
-        <h2 style="align-self: flex-start; margin-bottom: 0.5rem; color: var(--text-main);">Available Food Donations</h2>
-        <p style="align-self: flex-start; color: var(--text-muted); margin-bottom: 1rem;">Browse and request food from partnered restaurants.</p>
-        
-        <div id="food-list" style="width: 100%;">
-            <!-- Food items will be dynamically injected here by script.js -->
+    <div class="dashboard-wrapper">
+        <div class="welcome-card">
+            <h2>Welcome, <span id="ngoName">NGO</span>! 👋</h2>
+            <p>Browse and request surplus food donations from verified restaurants.</p>
         </div>
-    </div>
 
-    <!-- Support Ticket Button -->
-    <button id="supportBtn" class="support-btn" title="Open support ticket form">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <path d="M12 16v-4"></path>
-            <path d="M12 8h.01"></path>
-        </svg>
-        <span class="support-label">Support</span>
-    </button>
-
-    <!-- Support Ticket Modal -->
-    <div id="supportModal" class="support-modal">
-        <div class="support-modal-content">
-            <!-- Success State -->
-            <div id="successState" class="support-success" style="display: none;">
-                <div class="success-icon">✓</div>
-                <h3>Ticket Submitted!</h3>
-                <p>Thank you for reaching out. We'll respond to your query shortly.</p>
-                <p class="ticket-id">Ticket ID: <span id="ticketId"></span></p>
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-number" id="totalRequested">0</div>
+                <div>Total SMU Requested</div>
             </div>
-
-            <!-- Form State -->
-            <div id="formState">
-                <div class="support-header">
-                    <h2>Support Ticket</h2>
-                    <button class="close-btn" onclick="closeSupportModal()">&times;</button>
-                </div>
-                <p class="support-description">Let us know how we can help. We'll get back to you soon.</p>
-
-                <form id="supportForm" onsubmit="submitSupportTicket(event)">
-                    <!-- Name Field -->
-                    <div class="support-form-group">
-                        <label for="supportName">Your Name</label>
-                        <input 
-                            type="text" 
-                            id="supportName" 
-                            placeholder="Enter your full name" 
-                            required
-                        >
-                    </div>
-
-                    <!-- Query Field -->
-                    <div class="support-form-group">
-                        <label for="supportQuery">Your Query</label>
-                        <textarea 
-                            id="supportQuery" 
-                            placeholder="Describe your issue or question..." 
-                            required
-                        ></textarea>
-                    </div>
-
-                    <!-- Priority Field -->
-                    <div class="support-form-group">
-                        <label for="supportPriority">Priority Level</label>
-                        <select id="supportPriority" required>
-                            <option value="low">🟢 Low</option>
-                            <option value="medium" selected>🟡 Medium</option>
-                            <option value="high">🔴 High</option>
-                        </select>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="support-form-buttons">
-                        <button type="button" class="support-btn-cancel" onclick="closeSupportModal()">
-                            Cancel
-                        </button>
-                        <button type="submit" class="support-btn-submit">
-                            Submit Ticket
-                        </button>
-                    </div>
-                </form>
+            <div class="stat-box">
+                <div class="stat-number" id="remainingSMU">0</div>
+                <div>Remaining Capacity</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="ordersCompleted">0</div>
+                <div>Orders Completed</div>
             </div>
         </div>
+
+        <h2 style="margin-bottom: 1rem;">🍕 Available Food Donations</h2>
+        <div id="food-list" class="food-grid"></div>
     </div>
 
     <script src="script.js"></script>
-    <script>
-        // Check authentication
-        if (!sessionStorage.getItem("user") || JSON.parse(sessionStorage.getItem("user")).role !== "ngo") {
-            window.location.href = "login.html";
-        }
-
-        // ============================================
-        // SUPPORT TICKET SYSTEM FUNCTIONS
-        // ============================================
-
-        // Get elements
-        const supportBtn = document.getElementById('supportBtn');
-        const supportModal = document.getElementById('supportModal');
-        const supportForm = document.getElementById('supportForm');
-
-        // Open support modal
-        if (supportBtn) {
-            supportBtn.addEventListener('click', function() {
-                console.log('Support button clicked!');
-                supportModal.classList.add('active');
-            });
-        }
-
-        // Close support modal
-        function closeSupportModal() {
-            console.log('Closing support modal');
-            supportModal.classList.remove('active');
-            document.getElementById('formState').style.display = 'block';
-            document.getElementById('successState').style.display = 'none';
-            if (supportForm) {
-                supportForm.reset();
-            }
-        }
-
-        // Close modal when clicking outside
-        if (supportModal) {
-            supportModal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeSupportModal();
-                }
-            });
-        }
-
-        // Submit support ticket
-        function submitSupportTicket(event) {
-            event.preventDefault();
-            console.log('Form submitted');
-
-            const name = document.getElementById('supportName').value.trim();
-            const query = document.getElementById('supportQuery').value.trim();
-            const priority = document.getElementById('supportPriority').value;
-
-            // Validation
-            if (!name) {
-                alert('Please enter your name');
-                return;
-            }
-            if (!query) {
-                alert('Please enter your query');
-                return;
-            }
-
-            console.log('Creating ticket:', { name, query, priority });
-
-            // Create ticket object
-            const ticket = {
-                id: Date.now(),
-                name: name,
-                query: query,
-                priority: priority,
-                timestamp: new Date().toISOString(),
-                status: 'open'
-            };
-
-            // Store in localStorage
-            let tickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
-            tickets.push(ticket);
-            localStorage.setItem('supportTickets', JSON.stringify(tickets));
-
-            console.log('Ticket saved:', ticket);
-
-            // Show success state
-            document.getElementById('formState').style.display = 'none';
-            document.getElementById('successState').style.display = 'block';
-            document.getElementById('ticketId').textContent = '#' + ticket.id;
-
-            // Close modal after 2 seconds
-            setTimeout(function() {
-                closeSupportModal();
-            }, 2000);
-        }
-
-        // View all support tickets (for debugging)
-        function viewSupportTickets() {
-            const tickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
-            console.log('Support Tickets:', tickets);
-            return tickets;
-        }
-
-        console.log('Support ticket system loaded successfully!');
-    </script>
 </body>
 </html>
