@@ -3,76 +3,653 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodShare - Restaurant Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Food to NGO · Restaurant Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        .dashboard-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --leaf: #2d6a4f;
+            --leaf-mid: #40916c;
+            --leaf-light: #74c69d;
+            --leaf-pale: #d8f3dc;
+            --amber: #f4a261;
+            --amber-light: #fff3e0;
+            --cream: #fdfcf7;
+            --ink: #1a1a2e;
+            --ink-muted: #4a4a5a;
+            --border: rgba(0,0,0,0.08);
+            --shadow-green: rgba(45,106,79,0.14);
+            --bg: #f4f7f4;
         }
 
-        .welcome-card {
-            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            color: white;
-            margin-bottom: 2rem;
+        html, body { width: 100%; min-height: 100%; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
         }
 
-        .add-food-card {
+        /* ── Nav ── */
+        nav {
             background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 1px 12px rgba(0,0,0,0.05);
         }
 
-        .form-grid {
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--leaf), var(--leaf-mid));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .nav-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--leaf);
+        }
+
+        .nav-badge {
+            background: var(--leaf-pale);
+            color: var(--leaf);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.04em;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+        }
+
+        .nav-avatar {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--leaf), var(--leaf-mid));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .btn-logout {
+            padding: 0.45rem 1rem;
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover { background: #fecaca; transform: none; box-shadow: none; }
+
+        /* ── Layout ── */
+        .layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 340px 1fr;
+            gap: 0;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* ── Add Food Panel ── */
+        .panel-add {
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            margin-bottom: 1.75rem;
+        }
+
+        .panel-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--leaf-mid);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        /* Fields */
+        .field { position: relative; margin-bottom: 1.1rem; }
+
+        .field input, .field select {
+            width: 100%;
+            padding: 1rem 0.9rem 0.45rem 0.9rem;
+            font-size: 0.88rem;
+            font-family: 'DM Sans', sans-serif;
+            background: #f8faf8;
+            border: 1.5px solid rgba(45,106,79,0.12);
+            border-radius: 10px;
+            color: var(--ink);
+            outline: none;
+            transition: all 0.22s;
+            appearance: none;
+        }
+
+        .field input:focus, .field select:focus {
+            background: white;
+            border-color: var(--leaf-mid);
+            box-shadow: 0 0 0 3px rgba(45,106,79,0.08);
+        }
+
+        .field label {
+            position: absolute;
+            top: 50%;
+            left: 0.9rem;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .field input:focus ~ label,
+        .field input:not(:placeholder-shown) ~ label,
+        .field select:focus ~ label,
+        .field.has-val label {
+            top: 0.48rem;
+            font-size: 0.62rem;
+            color: var(--leaf-mid);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .btn-add-food {
+            width: 100%;
+            padding: 0.88rem;
+            background: linear-gradient(135deg, var(--leaf), var(--leaf-mid));
+            color: white;
+            border: none;
+            border-radius: 11px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 18px var(--shadow-green);
+            margin-top: 0.5rem;
+        }
+
+        .btn-add-food::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #40916c, #74c69d);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-add-food:hover { transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow-green); }
+        .btn-add-food:hover::before { opacity: 1; }
+        .btn-add-food span { position: relative; z-index: 1; }
+
+        .btn-spinner-small { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; position: relative; z-index: 1; margin: 0 auto; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-add-food.loading span { display: none; }
+        .btn-add-food.loading .btn-spinner-small { display: block; }
+
+        /* ── Food Listings Panel ── */
+        .panel-listings {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .listings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .listings-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        .listings-count {
+            background: var(--leaf-pale);
+            color: var(--leaf);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .btn-refresh {
+            padding: 0.45rem 0.9rem;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--ink-muted);
+            cursor: pointer;
+            width: auto;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:hover { border-color: var(--leaf-mid); color: var(--leaf); transform: none; box-shadow: none; }
+
+        /* Food Cards */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 1rem;
         }
 
-        .add-btn {
-            background: linear-gradient(135deg, #10b981, #059669);
-            margin-top: 1rem;
+        .food-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: cardFadeIn 0.3s ease both;
+        }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .food-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .food-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .food-card-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.2;
+        }
+
+        .food-type-badge {
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+
+        .badge-veg { background: #dcfce7; color: #166534; }
+        .badge-nonveg { background: #fee2e2; color: #991b1b; }
+        .badge-vegan { background: #f0fdf4; color: #14532d; }
+
+        .food-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 0.75rem;
+        }
+
+        .meta-item {
+            background: #f8faf8;
+            border-radius: 8px;
+            padding: 6px 8px;
+        }
+
+        .meta-label { font-size: 0.62rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .meta-value { font-size: 0.85rem; font-weight: 600; color: var(--ink); margin-top: 1px; }
+
+        .smu-bar {
+            margin-top: 0.9rem;
+            background: #e8f5e9;
+            border-radius: 4px;
+            height: 5px;
+            overflow: hidden;
+        }
+
+        .smu-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--leaf), var(--leaf-light));
+            border-radius: 4px;
+        }
+
+        .smu-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .smu-text { font-size: 0.72rem; color: var(--ink-muted); }
+        .smu-val { font-size: 0.72rem; font-weight: 700; color: var(--leaf); }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--ink-muted);
+        }
+
+        .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
+        .empty-sub { font-size: 0.85rem; line-height: 1.6; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 1.25rem; right: 1.25rem;
+            z-index: 9999;
+            background: white;
+            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            min-width: 260px; max-width: 340px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+            border-left: 4px solid #e74c3c;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: var(--leaf); }
+        .toast.error { border-left-color: #e74c3c; }
+        .toast-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+        .toast-body { flex: 1; }
+        .toast-title { font-weight: 600; font-size: 0.85rem; color: var(--ink); margin-bottom: 2px; }
+        .toast-msg { font-size: 0.77rem; color: var(--ink-muted); }
+        .toast-close { background: none; border: none; width: auto; padding: 0; cursor: pointer; color: var(--ink-muted); font-size: 1rem; line-height: 1; }
+        .toast-close:hover { color: var(--ink); transform: none; background: none; box-shadow: none; }
+
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; }
+            .panel-add { border-right: none; border-bottom: 1px solid var(--border); }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <h1>🍽️ FoodShare</h1>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </nav>
 
-    <div class="dashboard-wrapper">
-        <div class="welcome-card">
-            <h2>Welcome, <span id="restaurantName">Restaurant</span>! 🍕</h2>
-            <p>Share your surplus food and make a difference.</p>
+<!-- Nav -->
+<nav>
+    <div class="nav-brand">
+        <div class="nav-logo">🌿</div>
+        <span class="nav-title">Food to NGO</span>
+        <span class="nav-badge">Restaurant</span>
+    </div>
+    <div class="nav-right">
+        <div class="nav-user">
+            <div class="nav-avatar" id="navAvatar">R</div>
+            <span id="navName">Restaurant</span>
+        </div>
+        <button class="btn-logout" onclick="logout()">Sign Out</button>
+    </div>
+</nav>
+
+<div class="layout">
+
+    <!-- Add Food -->
+    <div class="panel-add">
+        <div class="panel-header">
+            <div class="panel-eyebrow">Manage Inventory</div>
+            <div class="panel-title">Add Food Listing</div>
         </div>
 
-        <div class="add-food-card">
-            <h3>➕ Add Surplus Food</h3>
-            <div class="form-grid">
-                <input type="text" id="food_name" placeholder="Food Name">
-                <input type="text" id="food_type" placeholder="Food Type (Veg/Non-Veg)">
-                <input type="number" id="shelf" placeholder="Shelf Life (hours)">
-                <select id="dry">
-                    <option value="dry">Dry Food</option>
-                    <option value="wet">Wet Food</option>
+        <div class="field">
+            <input type="text" id="food_name" placeholder=" ">
+            <label for="food_name">Food name</label>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <select id="food_type">
+                    <option value="">Type</option>
+                    <option value="Veg">Veg</option>
+                    <option value="Non-Veg">Non-Veg</option>
+                    <option value="Vegan">Vegan</option>
                 </select>
-                <input type="number" id="cal" placeholder="Calorific Value">
-                <input type="number" id="smu" placeholder="SMU Equivalent">
-                <input type="number" id="qty" placeholder="Quantity Available (SMU)">
+                <label for="food_type">Food type</label>
             </div>
-            <button class="add-btn" onclick="addFood()">Add Food →</button>
+            <div class="field">
+                <select id="dry">
+                    <option value="">Category</option>
+                    <option value="dry">Dry</option>
+                    <option value="wet">Wet</option>
+                </select>
+                <label for="dry">Dry / Wet</label>
+            </div>
         </div>
 
-        <h3>📋 Your Food Listings</h3>
-        <div id="food-list"></div>
+        <div class="field-row">
+            <div class="field">
+                <input type="number" id="shelf" placeholder=" " min="1">
+                <label for="shelf">Shelf life (hrs)</label>
+            </div>
+            <div class="field">
+                <input type="number" id="cal" placeholder=" " min="1">
+                <label for="cal">Calorific value</label>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <input type="number" id="smu" placeholder=" " min="1">
+                <label for="smu">SMU equivalent</label>
+            </div>
+            <div class="field">
+                <input type="number" id="qty" placeholder=" " min="1">
+                <label for="qty">Quantity (SMU)</label>
+            </div>
+        </div>
+
+        <button class="btn-add-food" id="addFoodBtn" onclick="addFood()">
+            <span>+ Add Food Listing</span>
+            <div class="btn-spinner-small"></div>
+        </button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Listings -->
+    <div class="panel-listings">
+        <div class="listings-header">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span class="listings-title">Your Listings</span>
+                <span class="listings-count" id="listingsCount">0</span>
+            </div>
+            <button class="btn-refresh" onclick="loadListings()">↻ Refresh</button>
+        </div>
+
+        <div class="food-grid" id="foodGrid">
+            <div class="empty-state">
+                <div class="empty-icon">🥘</div>
+                <div class="empty-title">No listings yet</div>
+                <div class="empty-sub">Add your first food listing using the form on the left</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">⚠️</span>
+    <div class="toast-body">
+        <div class="toast-title" id="toastTitle"></div>
+        <div class="toast-msg" id="toastMsg"></div>
+    </div>
+    <button class="toast-close" onclick="hideToast()">×</button>
+</div>
+
+<script>
+    const BASE_URL = "http://127.0.0.1:5000";
+
+    // Load user info
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    if (!user || !user.role) { window.location.href = 'login.html'; }
+
+    const displayName = user.name || 'Restaurant';
+    document.getElementById('navName').textContent = displayName;
+    document.getElementById('navAvatar').textContent = displayName.charAt(0).toUpperCase();
+
+    function logout() {
+        sessionStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
+
+    async function addFood() {
+        const food_name = document.getElementById('food_name').value.trim();
+        const food_type = document.getElementById('food_type').value;
+        const dry_or_wet = document.getElementById('dry').value;
+        const shelf = document.getElementById('shelf').value;
+        const cal = document.getElementById('cal').value;
+        const smu = document.getElementById('smu').value;
+        const qty = document.getElementById('qty').value;
+
+        if (!food_name || !food_type || !dry_or_wet || !shelf || !cal || !smu || !qty) {
+            showToast('error', 'Incomplete form', 'Please fill in all fields before submitting.');
+            return;
+        }
+
+        const btn = document.getElementById('addFoodBtn');
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(BASE_URL + '/add-food', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    restaurant_id: user.restaurant_id,
+                    food_name, food_type,
+                    shelf_life_hours: parseInt(shelf),
+                    dry_or_wet,
+                    calorific_value: parseInt(cal),
+                    smu_equivalent: parseInt(smu),
+                    quantity_available_smu: parseInt(qty)
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                showToast('success', 'Listing added!', food_name + ' is now visible to NGOs.');
+                ['food_name','shelf','cal','smu','qty'].forEach(id => document.getElementById(id).value = '');
+                document.getElementById('food_type').value = '';
+                document.getElementById('dry').value = '';
+                loadListings();
+            } else {
+                showToast('error', 'Failed', data.error || 'Could not add food listing.');
+            }
+        } catch (err) {
+            showToast('error', 'Server error', 'Make sure backend is running at ' + BASE_URL);
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    async function loadListings() {
+        try {
+            const res = await fetch(BASE_URL + '/get-food');
+            const data = await res.json();
+            const grid = document.getElementById('foodGrid');
+            document.getElementById('listingsCount').textContent = data.length;
+
+            if (!data.length) {
+                grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🥘</div><div class="empty-title">No listings yet</div><div class="empty-sub">Add your first food listing using the form on the left</div></div>';
+                return;
+            }
+
+            const badgeClass = t => t === 'Non-Veg' ? 'badge-nonveg' : t === 'Vegan' ? 'badge-vegan' : 'badge-veg';
+
+            grid.innerHTML = data.map(f => `
+                <div class="food-card">
+                    <div class="food-card-top">
+                        <div class="food-card-name">${f.food_name}</div>
+                        <span class="food-type-badge ${badgeClass(f.food_type)}">${f.food_type}</span>
+                    </div>
+                    <div class="food-meta">
+                        <div class="meta-item"><div class="meta-label">Category</div><div class="meta-value">${f.dry_or_wet || '—'}</div></div>
+                        <div class="meta-item"><div class="meta-label">Shelf Life</div><div class="meta-value">${f.shelf_life_hours || '—'} hrs</div></div>
+                        <div class="meta-item"><div class="meta-label">Calories</div><div class="meta-value">${f.calorific_value || '—'}</div></div>
+                        <div class="meta-item"><div class="meta-label">SMU unit</div><div class="meta-value">${f.smu_equivalent || '—'}</div></div>
+                    </div>
+                    <div class="smu-bar"><div class="smu-fill" style="width:${Math.min(100, (f.quantity_available_smu / 200) * 100)}%"></div></div>
+                    <div class="smu-label"><span class="smu-text">Available SMU</span><span class="smu-val">${f.quantity_available_smu}</span></div>
+                </div>
+            `).join('');
+        } catch (err) {
+            document.getElementById('foodGrid').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Could not load listings</div><div class="empty-sub">Make sure the backend server is running.</div></div>';
+        }
+    }
+
+    let toastTimer;
+    function showToast(type, title, msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastMsg').textContent = msg;
+        document.getElementById('toastIcon').textContent = type === 'success' ? '✅' : '❌';
+        t.className = 'toast ' + type + ' show';
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(hideToast, 4000);
+    }
+    function hideToast() { document.getElementById('toast').classList.remove('show'); }
+
+    loadListings();
+</script>
 </body>
 </html>
